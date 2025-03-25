@@ -7,11 +7,36 @@ SET time_zone = "+00:00";
 CREATE TABLE login_user (
     `id` int PRIMARY KEY AUTO_INCREMENT,
     `username` varchar(20) NOT NULL,
-    `password` varchar(255) NOT NULL -- Hash passwords before storing
+    `password` varchar(255) NOT NULL
 );
 
 INSERT INTO login_user (username, password) VALUES ('sanjay','Sanjay');
 INSERT INTO login_user (username, password) VALUES ('admin','Admin');
+INSERT INTO login_user (username, password) VALUES ('om','om');
+
+CREATE TABLE login_history (
+    `login_id` int PRIMARY KEY AUTO_INCREMENT,
+    `user_id` int NOT NULL,
+    `login_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `logout_time` DATETIME,
+    FOREIGN KEY (`user_id`) REFERENCES login_user(`id`)
+);
+
+DELIMITER //
+
+CREATE TRIGGER update_logout_time
+AFTER UPDATE ON login_user
+FOR EACH ROW
+BEGIN
+    IF OLD.password != NEW.password THEN
+        UPDATE login_history
+        SET logout_time = CURRENT_TIMESTAMP
+        WHERE user_id = OLD.id AND logout_time IS NULL;
+    END IF;
+END //
+
+DELIMITER ;
+
 
 -- Table structure for table `students`
 CREATE TABLE students (
@@ -25,6 +50,8 @@ CREATE TABLE students (
     address_city VARCHAR(100) NOT NULL,
     address_state VARCHAR(100) NOT NULL,
     address_zip VARCHAR(20) NOT NULL,
+    address_latitude INT NOT NULL,
+    address_longitude INT NOT NULL,
     contact_number VARCHAR(20) NOT NULL,
     email VARCHAR(100),
     guardian_name VARCHAR(100),
@@ -35,6 +62,8 @@ CREATE TABLE students (
     roll_number INT NOT NULL,
     standard INT NOT NULL
 );
+
+
 
 -- Table structure for table `Fees`
 
@@ -78,5 +107,14 @@ CREATE TABLE Slots (
     FOREIGN KEY (Teacher_ID) REFERENCES Teachers(T_ID)
 );
 
+CREATE VIEW Teacher_Pay AS
+SELECT T_ID AS Teacher_ID, pay_per_hour
+FROM Teachers;
+
+
+CREATE VIEW Slot_Duration AS
+SELECT Teacher_ID, SUM(Duration_Hours) AS total_duration
+FROM Slots
+GROUP BY Teacher_ID;
 
 COMMIT;

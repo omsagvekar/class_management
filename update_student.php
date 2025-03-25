@@ -12,6 +12,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $addressCity = $_POST['editAddressCity'];
     $addressState = $_POST['editAddressState'];
     $addressZip = $_POST['editAddressZip'];
+    $addressLatitude = $_POST['editAddressLatitude'];  // New Field
+    $addressLongitude = $_POST['editAddressLongitude']; // New Field
     $contactNumber = $_POST['editContactNumber'];
     $email = $_POST['editEmail'];
     $guardianName = $_POST['editGuardianName'];
@@ -20,9 +22,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $guardianEmail = $_POST['editGuardianEmail'];
     $admissionDate = $_POST['editAdmissionDate'];
 
-    $sql = "UPDATE students SET first_name=?, middle_name=?, last_name=?, date_of_birth=?, gender=?, address_street=?, address_city=?, address_state=?, address_zip=?, contact_number=?, email=?, guardian_name=?, guardian_relationship=?, guardian_contact_number=?, guardian_email=?, admission_date=? WHERE roll_number=?";
+    $sql = "UPDATE students 
+            SET first_name=?, middle_name=?, last_name=?, date_of_birth=?, gender=?, 
+                address_street=?, address_city=?, address_state=?, address_zip=?, 
+                address_latitude=?, address_longitude=?, 
+                contact_number=?, email=?, guardian_name=?, guardian_relationship=?, 
+                guardian_contact_number=?, guardian_email=?, admission_date=? 
+            WHERE roll_number=?";
+    
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssssssssssssssss", $firstName, $middleName, $lastName, $dob, $gender, $addressStreet, $addressCity, $addressState, $addressZip, $contactNumber, $email, $guardianName, $guardianRelationship, $guardianContactNumber, $guardianEmail, $admissionDate, $rollNumber);
+    $stmt->bind_param("sssssssssssssssssss", 
+                      $firstName, $middleName, $lastName, $dob, $gender, 
+                      $addressStreet, $addressCity, $addressState, $addressZip, 
+                      $addressLatitude, $addressLongitude,  // Bind the new fields
+                      $contactNumber, $email, $guardianName, $guardianRelationship, 
+                      $guardianContactNumber, $guardianEmail, $admissionDate, 
+                      $rollNumber);
+    
     $stmt->execute();
 
     if ($stmt->affected_rows > 0) {

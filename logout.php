@@ -2,11 +2,31 @@
 // Start the session
 session_start();
 
+// Database connection
+require "db_connect.php";
+
+$conn = new mysqli($servername, $username, $password, $database);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Assuming you are storing the user ID in the session when logging in
+if (isset($_SESSION['user_id'])) {
+    $userId = $_SESSION['user_id'];
+
+    // Update the logout time for the latest login entry for this user
+    $logoutTimeStmt = $conn->prepare("UPDATE login_history SET logout_time = NOW() WHERE user_id = ? AND logout_time IS NULL");
+    $logoutTimeStmt->bind_param("i", $userId);
+    $logoutTimeStmt->execute();
+}
+
 // Unset all of the session variables
 $_SESSION = array();
 
 // Destroy the session
 session_destroy();
+$conn->close();
 ?>
 
 <!DOCTYPE html>

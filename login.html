@@ -32,7 +32,6 @@
 
         input[type="text"],
         input[type="password"],
-        select,
         button {
             display: block;
             width: 90%;
@@ -65,15 +64,6 @@
             <button type="submit">Login</button>
         </form>
     </div>
-    <script>
-        // Check if the session variable is not set (user is logged out), then redirect to login page
-        if (!sessionStorage.getItem('isLoggedIn')) {
-            window.location.href = 'login.html'; // Replace 'login.html' with your actual login page
-        }
-
-        // Store a session variable to indicate that the user is logged in
-        sessionStorage.setItem('isLoggedIn', 'true');
-    </script>
 </body>
 
 </html>

@@ -1,4 +1,7 @@
 <?php
+// Start the session
+session_start();
+
 // Database connection
 require "db_connect.php";
 
@@ -17,6 +20,19 @@ $sql = "SELECT * FROM login_user WHERE username='$username' AND password='$passw
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
+    // Fetch user data
+    $user = $result->fetch_assoc();
+    $userId = $user['id']; // Get the user_id from the fetched row
+
+    // Store user_id in the session
+    $_SESSION['user_id'] = $userId;
+    
+    // Insert login time into login_history
+    $loginTimeStmt = $conn->prepare("INSERT INTO login_history (user_id, login_time) VALUES (?, NOW())");
+    $loginTimeStmt->bind_param("i", $userId);
+    $loginTimeStmt->execute();
+    
+    // Redirect to dashboard
     header("Location: dashboard.php");
     exit;
 } else {

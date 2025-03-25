@@ -20,7 +20,6 @@
         }
 
         .dashboard {
-            flex: 1;
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -54,7 +53,8 @@
             background-color: #f4f4f4;
         }
 
-        .filter-btn {
+        .filter-btn,
+        .redirect-link {
             background-color: #007bff;
             color: #fff;
             border: none;
@@ -65,7 +65,8 @@
             transition: background-color 0.3s;
         }
 
-        .filter-btn:hover {
+        .filter-btn:hover,
+        .redirect-link:hover {
             background-color: #0056b3;
         }
 
@@ -87,21 +88,6 @@
             color: white;
             padding: 10px;
         }
-
-        .redirect-link {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            padding: 10px 20px;
-            margin-bottom: 20px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .redirect-link:hover {
-            color: #0056b3;
-        }
     </style>
 </head>
 
@@ -120,10 +106,9 @@
 
                     // Query to fetch distinct teacher IDs
                     $query = "SELECT DISTINCT Teacher_ID FROM Slots";
-
                     $result = $conn->query($query);
 
-                    if ($result->num_rows > 0) {
+                    if ($result && $result->num_rows > 0) {
                         // Output options for each distinct teacher ID
                         while ($row = $result->fetch_assoc()) {
                             echo "<option value='" . $row["Teacher_ID"] . "'>" . $row["Teacher_ID"] . "</option>";
@@ -133,16 +118,17 @@
                 </select>
                 <button type="submit" class="filter-btn">Filter</button>
             </form>
+
             <?php
             // Check if a teacher ID filter is applied
             if (isset($_GET["teacher_id"]) && !empty($_GET["teacher_id"])) {
-                $teacherId = $_GET["teacher_id"];
+                $teacherId = intval($_GET["teacher_id"]); // Ensure teacher ID is an integer
 
                 // Query to fetch total duration hours for the teacher
                 $query = "SELECT SUM(Duration_Hours) AS total_duration FROM Slots WHERE Teacher_ID = $teacherId";
                 $result = $conn->query($query);
 
-                if ($result->num_rows > 0) {
+                if ($result && $result->num_rows > 0) {
                     $row = $result->fetch_assoc();
                     $totalDuration = $row['total_duration'];
 
@@ -150,7 +136,7 @@
                     $query = "SELECT pay_per_hour FROM Teachers WHERE T_ID = $teacherId";
                     $result = $conn->query($query);
 
-                    if ($result->num_rows > 0) {
+                    if ($result && $result->num_rows > 0) {
                         $row = $result->fetch_assoc();
                         $payPerHour = $row['pay_per_hour'];
 
@@ -159,7 +145,6 @@
 
                         // Display the result
                         echo "<div class='result'>Total Salary for Teacher ID $teacherId: Rs. $totalSalary</div>";
-                        echo "<br>";
                     } else {
                         echo "<div class='result'>Error: Pay per hour not found for Teacher ID $teacherId</div>";
                     }
@@ -168,10 +153,10 @@
                 }
             }
             ?>
+
             <table>
                 <thead>
                     <tr>
-                        <!-- <th>Slot ID</th> -->
                         <th>Teacher ID</th>
                         <th>Teacher Name</th>
                         <th>Slot Date</th>
@@ -185,7 +170,7 @@
                     // Check if a teacher ID filter is applied
                     $filter = "";
                     if (isset($_GET["teacher_id"]) && !empty($_GET["teacher_id"])) {
-                        $filter = " WHERE Teacher_ID = " . $_GET["teacher_id"];
+                        $filter = " WHERE Teacher_ID = " . intval($_GET["teacher_id"]);
                     }
 
                     // Query to fetch slots data with optional filter
@@ -194,23 +179,22 @@
 
                     $result = $conn->query($query);
 
-                    if ($result->num_rows > 0) {
+                    if ($result && $result->num_rows > 0) {
                         // Output data of each row
                         while ($row = $result->fetch_assoc()) {
                             echo "<tr>";
-                            // echo "<td>" . $row["Slot_ID"] . "</td>";
-                            echo "<td>" . $row["Teacher_ID"] . "</td>";
+                            echo "<td>" . htmlspecialchars($row["Teacher_ID"]) . "</td>";
                             // Combine first name, middle name, and last name
-                            $fullName = $row["first_name"] . " " . $row["middle_name"] . " " . $row["last_name"];
-                            echo "<td>" . $fullName . "</td>";
-                            echo "<td>" . $row["Slot_Date"] . "</td>";
-                            echo "<td>" . $row["From_Time"] . "</td>";
-                            echo "<td>" . $row["To_Time"] . "</td>";
-                            echo "<td>" . $row["Duration_Hours"] . "</td>";
+                            $fullName = trim($row["first_name"] . " " . $row["middle_name"] . " " . $row["last_name"]);
+                            echo "<td>" . htmlspecialchars($fullName) . "</td>";
+                            echo "<td>" . htmlspecialchars($row["Slot_Date"]) . "</td>";
+                            echo "<td>" . htmlspecialchars($row["From_Time"]) . "</td>";
+                            echo "<td>" . htmlspecialchars($row["To_Time"]) . "</td>";
+                            echo "<td>" . htmlspecialchars($row["Duration_Hours"]) . "</td>";
                             echo "</tr>";
                         }
                     } else {
-                        echo "<tr><td colspan='7'>No slots found</td></tr>";
+                        echo "<tr><td colspan='6'>No slots found</td></tr>";
                     }
 
                     // Close the database connection

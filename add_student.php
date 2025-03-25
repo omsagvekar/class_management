@@ -14,9 +14,9 @@
         }
 
         .container {
-            display: flex; /* Use flexbox to create a flexible layout */
-            max-width: 1400px; /* Increased max-width */
-            margin: auto; /* Centered horizontally */
+            display: flex;
+            max-width: 1400px;
+            margin: auto;
         }
 
         .sidebar {
@@ -27,8 +27,9 @@
             border-top-left-radius: 10px;
             border-bottom-left-radius: 10px;
         }
+
         .content {
-            flex: 1; /* Allow the content area to grow */
+            flex: 1;
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -36,14 +37,8 @@
         }
 
         h2 {
-            display: block;
             font-size: 1.5em;
-            margin-block-start: -0.17em;
-            margin-block-end: 0.83em;
-            margin-inline-start: 0px;
-            margin-inline-end: 0px;
             font-weight: bold;
-            unicode-bidi: isolate;
         }
 
         form {
@@ -68,7 +63,6 @@
             font-size: 16px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            box-sizing: border-box;
         }
 
         input[type="submit"] {
@@ -94,7 +88,7 @@
         <div class="content">
             <h2>Add Student</h2>
             <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-                <div class="form-group">
+            <div class="form-group">
                     <label for="f_name">First Name:</label>
                     <input type="text" id="f_name" name="first_name" autocapitalize="words" required>
                 </div>
@@ -134,23 +128,6 @@
                     <label for="roll_number">Roll Number:</label>
                     <input type="text" id="roll_number" name="roll_number" readonly>
                 </div>
-
-                <div class="form-group">
-                    <label for="address_street">Street Address:</label>
-                    <input type="text" id="address_street" name="address_street" required>
-                </div>
-                <div class="form-group">
-                    <label for="address_city">City:</label>
-                    <input type="text" id="address_city" name="address_city" required>
-                </div>
-                <div class="form-group">
-                    <label for="address_state">State:</label>
-                    <input type="text" id="address_state" name="address_state" autocapitalize="words" required>
-                </div>
-                <div class="form-group">
-                    <label for="address_zip">ZIP Code:</label>
-                    <input type="text" id="address_zip" name="address_zip" required>
-                </div>
                 <div class="form-group">
                     <label for="contact_number">Contact Number:</label>
                     <input type="text" id="contact_number" name="contact_number" required>
@@ -180,15 +157,37 @@
                     <input type="date" id="admission_date" name="admission_date" required>
                 </div>
                 
+                <div class="form-group">
+                    <label for="address_street">Street Address:</label>
+                    <input type="text" id="address_street" name="address_street" required>
+                </div>
+                <div class="form-group">
+                    <label for="address_city">City:</label>
+                    <input type="text" id="address_city" name="address_city" required>
+                </div>
+                <div class="form-group">
+                    <label for="address_state">State:</label>
+                    <input type="text" id="address_state" name="address_state" autocapitalize="words" required>
+                </div>
+                <div class="form-group">
+                    <label for="address_zip">ZIP Code:</label>
+                    <input type="text" id="address_zip" name="address_zip" required>
+                </div>
+                <div class="form-group">
+                    <label for="address_latitude">Latitude:</label>
+                    <input type="text" id="address_latitude" name="address_latitude">
+                </div>
+                <div class="form-group">
+                    <label for="address_longitude">Longitude:</label>
+                    <input type="text" id="address_longitude" name="address_longitude">
+                </div>
                 <input type="submit" value="Add Student">
             </form>
 
             <?php
                 include 'db_connect.php';
 
-                // Check if form is submitted
                 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                    // Get form data
                     $first_name = $_POST['first_name'];
                     $middle_name = $_POST['middle_name'];
                     $last_name = $_POST['last_name'];
@@ -205,18 +204,24 @@
                     $guardian_contact_number = $_POST['guardian_contact_number'];
                     $guardian_email = $_POST['guardian_email'];
                     $admission_date = $_POST['admission_date'];
-                    $roll_number = $_POST['roll_number']; // This will be generated automatically
+                    $roll_number = $_POST['roll_number'];
                     $standard = $_POST['standard'];
+                    $address_latitude = $_POST['address_latitude'];  // New field
+                    $address_longitude = $_POST['address_longitude']; // New field
 
-                    // Insert data into database
-                    $sql = "INSERT INTO students (first_name, middle_name, last_name, date_of_birth, gender, 
-                                address_street, address_city, address_state, address_zip, contact_number, email, 
-                                guardian_name, guardian_relationship, guardian_contact_number, guardian_email, 
-                                admission_date, roll_number, standard) 
-                            VALUES ('$first_name', '$middle_name', '$last_name', '$date_of_birth', '$gender', 
-                                '$address_street', '$address_city', '$address_state', '$address_zip', '$contact_number', '$email', 
-                                '$guardian_name', '$guardian_relationship', '$guardian_contact_number', '$guardian_email', 
-                                '$admission_date', '$roll_number', '$standard')";
+                    // Insert data into database with spatial attributes
+                    $sql = "INSERT INTO students 
+                            (first_name, middle_name, last_name, date_of_birth, gender, 
+                             address_street, address_city, address_state, address_zip, 
+                             address_latitude, address_longitude, contact_number, email, 
+                             guardian_name, guardian_relationship, guardian_contact_number, 
+                             guardian_email, admission_date, roll_number, standard) 
+                            VALUES 
+                            ('$first_name', '$middle_name', '$last_name', '$date_of_birth', '$gender', 
+                             '$address_street', '$address_city', '$address_state', '$address_zip', 
+                             '$address_latitude', '$address_longitude', '$contact_number', '$email', 
+                             '$guardian_name', '$guardian_relationship', '$guardian_contact_number', 
+                             '$guardian_email', '$admission_date', '$roll_number', '$standard')";
                     
                     if ($conn->query($sql) === TRUE) {
                         echo "<script>
@@ -227,13 +232,11 @@
                         echo "<p>Error: " . $sql . "<br>" . $conn->error . "</p>";
                     }
 
-                    // Close database connection
                     $conn->close();
                 }
             ?>
         </div>
     </div>
-
     <script>
         document.addEventListener("DOMContentLoaded", function() {
         var standardSelect = document.getElementById("standard");

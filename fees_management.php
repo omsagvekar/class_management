@@ -150,7 +150,7 @@
                 <tbody>
                 <?php
                     include 'db_connect.php'; 
-
+                    //Main Query
                     $sql = "SELECT s.*, IFNULL(f.total_fees, 0) AS total_fees, IFNULL(f.balance_fees, 0) AS balance_fees
                             FROM students s
                             LEFT JOIN (
@@ -163,6 +163,7 @@
                             ) f ON s.student_id = f.student_id";
 
                     // Check if standard is selected in the "Show by" form
+                    //Horizontal Fragementation
                     if (isset($_GET['standard']) && !empty($_GET['standard'])) {
                         // Filter by selected standard
                         $standard = $_GET['standard'];

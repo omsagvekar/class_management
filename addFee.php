@@ -5,7 +5,7 @@ $student_id = $_GET['student_id'];
 $sql = "SELECT s.*, f.Last_Payment_Date, f.Total_Fees, SUM(f.Paid_Fees) AS total_paid, MAX(f.Last_Payment_Date) AS last_payment_date
         FROM students s
         LEFT JOIN Fees f ON s.student_id = f.student_id
-        WHERE s.student_id = $student_id";
+        WHERE s.student_id = $student_id";  
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
