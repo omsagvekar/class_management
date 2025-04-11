@@ -7,7 +7,13 @@ $username = $_POST['u'];
 $password = $_POST['p'];
 
 // Prepare SQL statement to avoid SQL injection
-$stmt = $conn->prepare("SELECT * FROM login_user WHERE username = ? AND password = ?");
+$query = "SELECT * FROM login_user WHERE username = ? AND password = ?";
+$stmt = $conn->prepare($query);
+
+if (!$stmt) {
+    die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
+}
+
 $stmt->bind_param("ss", $username, $password);
 $stmt->execute();
 $result = $stmt->get_result();
