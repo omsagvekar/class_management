@@ -57,7 +57,7 @@
 
 <body>
     <div class="login-container">
-        <h2>Welcome to ClassMaster</h2>
+        <h2>Welcome to Class Management</h2>
         <form id="login-form" action="login.php" method="POST">
             <input type="text" id="username" name="u" placeholder="Username" required>
             <input type="password" id="password" name="p" placeholder="Password" required>
