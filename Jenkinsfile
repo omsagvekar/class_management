@@ -1,4 +1,3 @@
- 
 pipeline {
     agent any
 
@@ -18,9 +17,18 @@ pipeline {
 
         stage('Run Test') {
             steps {
-                sh 'sleep 10' // wait for container to start
-                sh 'curl -s http://localhost:8080 | grep "Class Management"'
+                echo 'Waiting for container to start...'
+                sh 'sleep 10'
+                // Use port 8081 (or whatever you configured in docker-compose)
+                sh 'curl -s http://localhost:8081 | grep "Class Management"'
             }
+        }
+    }
+
+    post {
+        always {
+            echo 'Cleaning up containers...'
+            sh 'docker-compose down'
         }
     }
 }
