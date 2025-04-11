@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        git 'DefaultGit' // name you gave in Jenkins tool config
+    }
+
     stages {
         stage('Clone Repo') {
             steps {
@@ -15,13 +19,13 @@ pipeline {
             }
         }
 
-        stage('Run Test') {
-            steps {
-                echo 'Waiting for container to start...'
-                bat 'timeout /t 10'
-                bat 'curl http://localhost:8081'
-            }
-        }
+       stage('Run Test') {
+    steps {
+        echo 'Waiting for container to start...'
+        sleep time: 10, unit: 'SECONDS'
+    }
+}
+
     }
 
     post {
