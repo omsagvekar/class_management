@@ -1,17 +1,12 @@
- 
-version: '3.8'
+version: "3.8"
+
 services:
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8081:80"
-
-  db:
-    image: mysql:5.7
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: 
-    ports:
-      - "3306:3306"
     volumes:
-      - ./db:/docker-entrypoint-initdb.d
+      - ./app:/var/www/html  # live updates if needed
+    container_name: class_web
