@@ -43,7 +43,7 @@ $conn->close();
     <script>
         // Redirect to the login page after a short delay
         setTimeout(function () {
-            window.location.href = 'login.html';
+            window.location.href = 'login.php';
         }, 2000); // Change the delay time as needed
     </script>
 </body>
