@@ -6,5 +6,6 @@ services:
     ports:
       - "8081:80"
     volumes:
-      - ./app:/var/www/html  # live updates if needed
+      - ./app:/var/www/html
     container_name: class_web
+    restart: always  # <--- Add this line

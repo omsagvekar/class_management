@@ -14,24 +14,18 @@ pipeline {
 
         stage('Build Docker') {
             steps {
-                bat 'docker-compose down'
+                // bat 'docker-compose down'
                 bat 'docker-compose up --build -d'
             }
         }
 
-       stage('Run Test') {
-    steps {
-        echo 'Waiting for container to start...'
-        sleep time: 10, unit: 'SECONDS'
-    }
-}
-
-    }
-
-    post {
-        always {
-            echo 'Cleaning up containers...'
-            bat 'docker-compose down'
+        stage('Run Test') {
+            steps {
+                echo 'Waiting for container to start...'
+                sleep time: 10, unit: 'SECONDS'
+            }
         }
     }
+
+    // Removed post stage to keep container running
 }
