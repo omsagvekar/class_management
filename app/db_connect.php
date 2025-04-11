@@ -1,13 +1,11 @@
 <?php
-$servername = "db"; // Change this to your MySQL server address
-$username = "root"; // Change this to your MySQL username
-$password = "root"; // Change this to your MySQL password
-$database = "new_classroom"; // Change this to your MySQL database name
+$servername = "db"; // Service name of MySQL container in docker-compose
+$username = "user"; // Match docker-compose MYSQL_USER
+$password = "password"; // Match docker-compose MYSQL_PASSWORD
+$database = "new_classroom"; // Match MYSQL_DATABASE
 
-// Create connection
 $conn = new mysqli($servername, $username, $password, $database);
 
-// Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }

@@ -1,45 +1,35 @@
 <?php
-// Start the session
 session_start();
-
-// Database connection
 require "db_connect.php";
-
-$conn = new mysqli($servername, $username, $password, $database);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 
 // Form data
 $username = $_POST['u'];
 $password = $_POST['p'];
 
-// SQL to check username and password
-$sql = "SELECT * FROM login_user WHERE username='$username' AND password='$password'";
-$result = $conn->query($sql);
+// Prepare SQL statement to avoid SQL injection
+$stmt = $conn->prepare("SELECT * FROM login_user WHERE username = ? AND password = ?");
+$stmt->bind_param("ss", $username, $password);
+$stmt->execute();
+$result = $stmt->get_result();
 
 if ($result->num_rows > 0) {
-    // Fetch user data
     $user = $result->fetch_assoc();
-    $userId = $user['id']; // Get the user_id from the fetched row
+    $userId = $user['id'];
 
-    // Store user_id in the session
     $_SESSION['user_id'] = $userId;
-    
-    // Insert login time into login_history
+
+    // Log login time
     $loginTimeStmt = $conn->prepare("INSERT INTO login_history (user_id, login_time) VALUES (?, NOW())");
     $loginTimeStmt->bind_param("i", $userId);
     $loginTimeStmt->execute();
-    
-    // Redirect to dashboard
+
     header("Location: dashboard.php");
     exit;
 } else {
     echo "<script>
-            alert('Invalid Username or Password!!!');
-            window.location.href = 'login.html';
-        </script>";
+        alert('Invalid Username or Password!!!');
+        window.location.href = 'login.html';
+    </script>";
 }
 
 $conn->close();
