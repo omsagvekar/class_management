@@ -8,4 +8,4 @@ services:
     volumes:
       - ./app:/var/www/html
     container_name: class_web
-    restart: always  # <--- Add this line
+    restart: always
