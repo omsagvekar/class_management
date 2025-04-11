@@ -1,16 +1,10 @@
  
 version: '3.8'
-
 services:
   web:
     build: .
     ports:
-      - "8081:80"  # Changed from 8080 to 8081
-    volumes:
-      - ./app:/var/www/html/
-    depends_on:
-      - db
-
+      - "8081:80"
 
   db:
     image: mysql:5.7
