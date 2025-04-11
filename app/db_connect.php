@@ -1,7 +1,7 @@
 <?php
 $servername = "db"; // Change this to your MySQL server address
 $username = "root"; // Change this to your MySQL username
-$password = ""; // Change this to your MySQL password
+$password = "root"; // Change this to your MySQL password
 $database = "new_classroom"; // Change this to your MySQL database name
 
 // Create connection
