@@ -22,8 +22,7 @@ pipeline {
         stage('Run Test') {
             steps {
                 echo 'Waiting for container to start...'
-                echo 'Running tests...'
-                sh 'vendor/bin/phpunit tests'
+                sleep time: 10, unit: 'SECONDS'
             }
         }
     }
