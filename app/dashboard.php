@@ -153,7 +153,7 @@
             <div>
                 <button class="logout" onclick="location.href='logout.php';"><i class="fa-solid fa-power-off"></i> Logout</button>
             </div>
-            <h1> Hello Devops Practical Done by the Team</h1>
+            <h1> Hello Devops Practical Done by the Team - test 1</h1>
             <div class="metrics">
                 <div class="metric">
                     <h2>Total Fees Collected</h2>
