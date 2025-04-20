@@ -19,10 +19,11 @@ pipeline {
         }
 
         stage('Composer Install') {
-            steps {
-                bat 'docker exec class_web composer install'
-            }
-        }
+    steps {
+        bat 'docker exec class_web composer install --no-interaction --prefer-dist'
+    }
+}
+
 
         stage('Run PHPUnit Tests') {
             steps {

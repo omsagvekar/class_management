@@ -13,9 +13,6 @@ COPY ./app/ /var/www/html/
 
 WORKDIR /var/www/html
 
-RUN composer install \
-    && composer require --dev phpunit/phpunit ^10
-
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
