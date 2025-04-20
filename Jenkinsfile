@@ -14,7 +14,7 @@ pipeline {
 
         stage('Build Docker Containers') {
             steps {
-                bat 'docker-compose down'  // Clean up previous containers
+                bat 'docker-compose down'
                 bat 'docker-compose up --build -d'
             }
         }
@@ -22,7 +22,6 @@ pipeline {
         stage('Wait for Database Readiness') {
             steps {
                 script {
-                    // Wait max 30 seconds for MySQL to be ready
                     bat '''
                         docker exec class_db bash -c \
                         "while ! mysqladmin ping -h localhost --silent; do sleep 2; echo 'Waiting for database...'; done; echo 'Database ready!'"
@@ -33,7 +32,7 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                bat 'docker exec class_web rm -rf vendor'  // Clean existing dependencies
+                bat 'docker exec class_web rm -rf vendor'
                 bat 'docker exec class_web composer install --no-interaction'
             }
         }
@@ -47,10 +46,7 @@ pipeline {
         stage('Smoke Tests') {
             steps {
                 script {
-                    // Test 1: Check homepage accessibility
                     bat 'curl -I http://localhost:8081 | find "200 OK"'
-                    
-                    // Test 2: Verify database structure
                     bat '''
                         docker exec class_db mysql -u user -ppassword new_classroom -e \
                         "SHOW TABLES LIKE 'login_user'" | find "login_user"
@@ -61,9 +57,9 @@ pipeline {
     }
 
     post {
-        always {
-            // Optional: Clean up containers after build
-            // bat 'docker-compose down'
-        }
+    always {
+        echo 'Containers kept running for inspection'
+        // bat 'docker ps'  // Optional: List running containers
     }
+}
 }
