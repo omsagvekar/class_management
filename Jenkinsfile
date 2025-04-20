@@ -23,7 +23,7 @@ pipeline {
             steps {
                 // Test 1: Actual login functionality
                 bat '''
-                    curl -X POST http://localhost:8081/login.php \
+                    curl -X POST http://localhost:8081/index.php \
                     -d "u=admin&p=admin" \
                     | find "dashboard.php"
                 '''
