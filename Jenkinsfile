@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        git 'DefaultGit' // name you gave in Jenkins tool config
+        git 'DefaultGit'
     }
 
     stages {
@@ -14,18 +14,20 @@ pipeline {
 
         stage('Build Docker') {
             steps {
-                // bat 'docker-compose down'
                 bat 'docker-compose up --build -d'
             }
         }
 
-        stage('Run Test') {
+        stage('Composer Install') {
             steps {
-                echo 'Waiting for container to start...'
-                sleep time: 10, unit: 'SECONDS'
+                bat 'docker exec class_web composer install'
+            }
+        }
+
+        stage('Run PHPUnit Tests') {
+            steps {
+                bat 'docker exec class_web vendor\\bin\\phpunit --testdox tests'
             }
         }
     }
-
-    // Removed post stage to keep container running
 }
