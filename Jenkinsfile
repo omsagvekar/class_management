@@ -25,8 +25,6 @@ pipeline {
     }
 }
 
-
-
         stage('Run PHPUnit Tests') {
             steps {
                 bat 'docker exec class_web vendor\\bin\\phpunit --testdox tests'
