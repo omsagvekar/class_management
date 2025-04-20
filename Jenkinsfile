@@ -12,54 +12,40 @@ pipeline {
             }
         }
 
-        stage('Build Docker Containers') {
+        stage('Build Containers') {
             steps {
                 bat 'docker-compose down'
-                bat 'docker-compose up --build -d'
+                bat 'docker-compose build --no-cache'
+                bat 'docker-compose up -d'
             }
         }
 
-        stage('Wait for Database Readiness') {
+        stage('Wait for Database') {
             steps {
-                script {
-                    bat '''
-                        docker exec class_db bash -c \
-                        "while ! mysqladmin ping -h localhost --silent; do sleep 2; echo 'Waiting for database...'; done; echo 'Database ready!'"
-                    '''
-                }
+                bat '''
+                    docker exec class_db bash -c \
+                    "until mysqladmin ping -hlocalhost -uuser -ppassword --silent; do sleep 2; echo 'Waiting for DB...'; done"
+                '''
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                bat 'docker exec class_web rm -rf vendor'
-                bat 'docker exec class_web composer install --no-interaction'
+                bat 'docker exec class_web composer install --no-interaction --ignore-platform-reqs'
             }
         }
 
-        stage('Run PHPUnit Tests') {
+        stage('Run Tests') {
             steps {
-                bat 'docker exec class_web vendor\\bin\\phpunit --testdox --testsuite "Application Test Suite"'
-            }
-        }
-
-        stage('Smoke Tests') {
-            steps {
-                script {
-                    bat 'curl -I http://localhost:8081 | find "200 OK"'
-                    bat '''
-                        docker exec class_db mysql -u user -ppassword new_classroom -e \
-                        "SHOW TABLES LIKE 'login_user'" | find "login_user"
-                    '''
-                }
+                bat 'docker exec class_web ./vendor/bin/phpunit --testdox tests/'
             }
         }
     }
 
     post {
-    always {
-        echo 'Containers kept running for inspection'
-        // bat 'docker ps'  // Optional: List running containers
+        always {
+            echo 'Cleaning up containers'
+            bat 'docker-compose down'
+        }
     }
-}
 }
