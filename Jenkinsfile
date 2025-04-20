@@ -20,21 +20,21 @@ pipeline {
         }
 
         stage('Real Tests') {
-    steps {
-        // Test 1: Actual login functionality
-        bat '''
-            curl -L -X POST http://localhost:8081/login.php \
-            -d "u=admin&p=Admin" \
-            | find "dashboard.php"
-        '''
-        
-        // Test 2: Verify user exists in database
-        bat '''
-            docker exec class_db mysql -u user -ppassword new_classroom \
-            -e "SELECT COUNT(*) FROM login_user" | find "1"
-        '''
-    }
-}
+            steps {
+                // Login test
+                bat '''
+                    curl -L -X POST http://localhost:8081/login.php \
+                    -d "u=admin&p=Admin" \
+                    | find "dashboard.php"
+                '''
+                // Database test (now expecting 3 users)
+                bat '''
+                    docker exec class_db mysql -u user -ppassword new_classroom \
+                    -e "SELECT COUNT(*) FROM login_user" | find "3"
+                '''
+            }
+        }
+
     }
 
     post {
