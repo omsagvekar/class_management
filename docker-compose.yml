@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   web:
     build:
@@ -10,10 +12,7 @@ services:
     container_name: class_web
     restart: always
     depends_on:
-      db:
-        condition: service_healthy
-    networks:  # Add network
-      - app_network
+      - db
 
   db:
     image: mysql:5.7
@@ -29,17 +28,7 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       - ./database/myscript.sql:/docker-entrypoint-initdb.d/myscript.sql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:  # Add network
-      - app_network
+  # 👈 Auto-import on first run
 
 volumes:
   db_data:
-
-networks:  # Define network
-  app_network:
-    driver: bridge

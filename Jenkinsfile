@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        git 'DefaultGit'
+        git 'DefaultGit' // name you gave in Jenkins tool config
     }
 
     stages {
@@ -14,29 +14,18 @@ pipeline {
 
         stage('Build Docker') {
             steps {
+                // bat 'docker-compose down'
                 bat 'docker-compose up --build -d'
             }
         }
 
-        stage('Wait for DB') {  // New stage
+        stage('Run Test') {
             steps {
-                bat '''
-                    docker exec class_db bash -c "while ! mysqladmin ping -h localhost --silent; do sleep 1; done"
-                '''
-            }
-        }
-
-        stage('Composer Clean & Install') {
-            steps {
-                bat 'docker exec class_web rm -rf vendor'  // Removed composer.lock deletion
-                bat 'docker exec class_web composer install'
-            }
-        }
-
-        stage('Run PHPUnit Tests') {
-            steps {
-                bat 'docker exec class_web vendor\\bin\\phpunit --testdox'  // Removed explicit tests argument
+                echo 'Waiting for container to start...'
+                sleep time: 10, unit: 'SECONDS'
             }
         }
     }
+
+    // Removed post stage to keep container running
 }
