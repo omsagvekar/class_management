@@ -12,7 +12,12 @@ services:
     networks:
       - app_network
     container_name: class_web
-    restart: always
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:80"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     depends_on:
       db:
         condition: service_healthy
@@ -20,7 +25,7 @@ services:
   db:
     image: mysql:5.7
     container_name: class_db
-    restart: always
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: new_classroom

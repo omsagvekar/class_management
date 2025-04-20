@@ -20,12 +20,21 @@ pipeline {
             }
         }
 
-        stage('Wait for Database') {
+        stage('Wait for Services') {
             steps {
-                bat '''
-                    docker exec class_db bash -c \
-                    "until mysqladmin ping -hlocalhost -uuser -ppassword --silent; do sleep 2; echo 'Waiting for DB...'; done"
-                '''
+                script {
+                    timeout(time: 2, unit: 'MINUTES') {
+                        bat '''
+                            echo "Waiting for database..."
+                            docker exec class_db bash -c \
+                            "until mysqladmin ping -hlocalhost -uuser -ppassword --silent; do sleep 2; done"
+                            
+                            echo "Waiting for web server..."
+                            docker exec class_web bash -c \
+                            "until curl --output /dev/null --silent --head --fail http://localhost; do sleep 2; done"
+                        '''
+                    }
+                }
             }
         }
 
