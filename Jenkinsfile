@@ -31,7 +31,7 @@ pipeline {
                 // Test 2: Verify user exists in database
                 bat '''
                     docker exec class_db mysql -u user -ppassword new_classroom \
-                    -e "SELECT COUNT(*) FROM login_user" | find "1"
+                    -e "SELECT COUNT(*) FROM login_user" | find "admin"
                 '''
             }
         }
