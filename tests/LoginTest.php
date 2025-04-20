@@ -1,4 +1,5 @@
 <?php
+namespace Tests;  // Added namespace
 
 use PHPUnit\Framework\TestCase;
 

@@ -12,6 +12,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    networks:  # Add network
+      - app_network
 
   db:
     image: mysql:5.7
@@ -32,6 +34,12 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:  # Add network
+      - app_network
 
 volumes:
   db_data:
+
+networks:  # Define network
+  app_network:
+    driver: bridge
