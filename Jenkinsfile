@@ -24,7 +24,7 @@ pipeline {
                 // Test 1: Actual login functionality
                 bat '''
                     curl -X POST http://localhost:8081/login.php \
-                    -d "u=admin&p=Admin" \
+                    -d "u=admin&p=admin" \
                     | find "dashboard.php"
                 '''
                 
