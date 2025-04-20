@@ -18,11 +18,13 @@ pipeline {
             }
         }
 
-        stage('Composer Install') {
+        stage('Composer Clean & Install') {
     steps {
-        bat 'docker exec class_web composer install --no-interaction --prefer-dist'
+        bat 'docker exec class_web rm -rf vendor composer.lock'
+        bat 'docker exec class_web composer install'
     }
 }
+
 
 
         stage('Run PHPUnit Tests') {
