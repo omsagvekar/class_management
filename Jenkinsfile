@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        git 'DefaultGit' // name you gave in Jenkins tool config
+        git 'DefaultGit'
     }
 
     stages {
@@ -12,20 +12,28 @@ pipeline {
             }
         }
 
-        stage('Build Docker') {
+        stage('Start Containers') {
             steps {
-                // bat 'docker-compose down'
                 bat 'docker-compose up --build -d'
+                sleep 15 // Wait for containers to initialize
             }
         }
 
-        stage('Run Test') {
+        stage('Basic Tests') {
             steps {
-                echo 'Waiting for container to start...'
-                sleep time: 10, unit: 'SECONDS'
+                // Test 1: Check homepage loads
+                bat 'curl -I http://localhost:8081 | find "200 OK"'
+                
+                // Test 2: Verify database connection
+                bat 'docker exec class_db mysql -u user -ppassword new_classroom -e "SHOW TABLES" | find "login_user"'
             }
         }
     }
 
-    // Removed post stage to keep container running
+    post {
+        always {
+            echo 'Pipeline completed'
+            // bat 'docker-compose down' // Cleanup
+        }
+    }
 }
