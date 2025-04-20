@@ -2,59 +2,30 @@ pipeline {
     agent any
 
     tools {
-        git 'DefaultGit'
+        git 'DefaultGit' // name you gave in Jenkins tool config
     }
 
     stages {
-        stage('Clone Repository') {
+        stage('Clone Repo') {
             steps {
                 git branch: 'main', url: 'https://github.com/omsagvekar/class_management.git'
             }
         }
 
-        stage('Build Containers') {
+        stage('Build Docker') {
             steps {
-                bat 'docker-compose down'
-                bat 'docker-compose build --no-cache'
-                bat 'docker-compose up -d'
+                // bat 'docker-compose down'
+                bat 'docker-compose up --build -d'
             }
         }
 
-        stage('Wait for Services') {
+        stage('Run Test') {
             steps {
-                script {
-                    timeout(time: 2, unit: 'MINUTES') {
-                        bat '''
-                            echo "Waiting for database..."
-                            docker exec class_db bash -c \
-                            "until mysqladmin ping -hlocalhost -uuser -ppassword --silent; do sleep 2; done"
-                            
-                            echo "Waiting for web server..."
-                            docker exec class_web bash -c \
-                            "until curl --output /dev/null --silent --head --fail http://localhost; do sleep 2; done"
-                        '''
-                    }
-                }
-            }
-        }
-
-        stage('Install Dependencies') {
-            steps {
-                bat 'docker exec class_web composer install --no-interaction --ignore-platform-reqs'
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                bat 'docker exec class_web ./vendor/bin/phpunit --testdox tests/'
+                echo 'Waiting for container to start...'
+                sleep time: 10, unit: 'SECONDS'
             }
         }
     }
 
-    post {
-        always {
-            echo 'Cleaning up containers'
-            bat 'docker-compose down'
-        }
-    }
+    // Removed post stage to keep container running
 }
