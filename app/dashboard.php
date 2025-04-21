@@ -153,7 +153,7 @@
             <div>
                 <button class="logout" onclick="location.href='logout.php';"><i class="fa-solid fa-power-off"></i> Logout</button>
             </div>
-            <h1> Dashboard of Class Management </h1>
+            <h1> Dashboard of Class Management test 1</h1>
             <div class="metrics">
                 <div class="metric">
                     <h2>Total Fees Collected</h2>
